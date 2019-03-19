@@ -1,0 +1,207 @@
+graphql notes
+
+GraphQL is a query language for your API, and a server-side runtime for executing queries by using a type system you define for your data
+
+GraphQL is a query language to retrieve data from a server. It is an alternative to REST, SOAP or gRPC in some way
+
+language? has syntax (keywords) and structure
+
+One very important property of GraphQL is that it is statically typed: the server knows exactly the shape of every object you can query and any client can actually “introspect” the server and ask for the so called “schema”. 
+("schema" here refers to a “GraphQL Schema”, which is not related to other schemas like “JSON Schema” or “Database Schema”)
+
+A GraphQL service is created by defining types and fields on those types, then providing functions for each field on each type. 
+
+Fields
+At its simplest, GraphQL is about asking for specific fields on objects. 
+The query has exactly the same shape as the result. This is an essential characteristic of GraphQL, because you always get back what you expect, and the server knows exactly what fields the client is asking for.
+
+{
+  hero {
+    name
+  }
+}
+
+{
+  "data": {
+    "hero": {
+      "name": "R2-D2"
+    }
+  }
+}
+
+Arguments
+
+These extend the capability of GraphQL from simply returning data but also applying a criteria to the data retrieved.
+In a system like REST, you can only pass a single set of arguments - the query parameters and URL segments in your request. But in GraphQL, every field and nested object can get its own set of arguments, making GraphQL a complete replacement for making multiple API fetches.
+
+{
+  human(id: "1000") {
+    name
+    height(unit: FOOT)
+  }
+}
+
+{
+  "data": {
+    "human": {
+      "name": "Luke Skywalker",
+      "height": 5.6430448
+    }
+  }
+}
+
+GraphQL comes with a default set of types, but a GraphQL server can also declare its own custom types, as long as they can be serialized into your transport format.
+
+Aliases 
+
+since the result object fields match the name of the field in the query but don't include arguments, you can't directly query for the same field with different arguments. 
+Aliases let you rename the result of a field to anything you want.
+
+{
+  empireHero: hero(episode: EMPIRE) {
+    name
+  }
+  jediHero: hero(episode: JEDI) {
+    name
+  }
+}
+
+{
+  "data": {
+    "empireHero": {
+      "name": "Luke Skywalker"
+    },
+    "jediHero": {
+      "name": "R2-D2"
+    }
+  }
+}
+
+Fragments 
+
+These let you construct sets of fields, and then include them in queries where you need to, and use the as "reusable units"
+
+{
+  leftComparison: hero(episode: EMPIRE) {
+    ...comparisonFields
+  }
+  rightComparison: hero(episode: JEDI) {
+    ...comparisonFields
+  }
+}
+
+fragment comparisonFields on Character {
+  name
+  appearsIn
+  friends {
+    name
+  }
+}
+
+Operations (name and type)
+
+Useful to eliminate ambiguity. Think of this just like a function name in your favorite programming language
+The operation type is either query, mutation, or subscription and describes what type of operation you're intending to do
+The operation name is a meaningful and explicit name for your operation. It is only required in multi-operation documents, but its use is encouraged because it is very helpful for debugging and server-side logging. 
+
+query HeroNameAndFriends {
+  hero {
+    name
+    friends {
+      name
+    }
+  }
+}
+
+Variables
+
+Allow you to pass dynamic variables to an operation. All declared variables must be either scalars, enums, or input object types. So if you want to pass a complex object into a field, you need to know what input type that matches on the server. 
+Variable definitions can be optional or required (prefixed by !).
+
+query HeroNameAndFriends($episode: Episode) {
+  hero(episode: $episode) {
+    name
+    friends {
+      name
+    }
+  }
+}
+
+Default variables 
+
+Can be assigned to the variables in the query by adding the default value after the type declaration. 
+When default values are provided, you can call the query without passing a corresponding variable. If any variables are passed as part of the variables dictionary, they will override the defaults
+
+query HeroNameAndFriends($episode: Episode = JEDI) {
+  hero(episode: $episode) {
+    name
+    friends {
+      name
+    }
+  }
+}
+
+Directives 
+
+These dynamically change the structure and shape of our queries using variables.
+
+query Hero($episode: Episode, $withFriends: Boolean!) {
+  hero(episode: $episode) {
+    name
+    friends @include(if: $withFriends) {
+      name
+    }
+  }
+}
+
+A corresponding query might look like:
+
+{
+  "episode": "JEDI",
+  "withFriends": false
+}
+
+and the result would not include any friends that might be available
+
+Mutations
+
+Just like GET fetches data and POST sends data in REST applications, the converse in GraphQL is that Queries fetch data and Mutations send data
+Just like in queries, if the mutation field returns an object type, you can ask for nested fields. This can be useful for fetching the new state of an object after an update.
+
+Give the mutation definition below:
+
+mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+  createReview(episode: $ep, review: $review) {
+    stars
+    commentary
+  }
+}
+
+The dispatched mutation may look like:
+
+{
+  "ep": "JEDI",
+  "review": {
+    "stars": 5,
+    "commentary": "This is a great movie!"
+  }
+}
+
+And the result may look like:
+
+{
+  "data": {
+    "createReview": {
+      "stars": 5,
+      "commentary": "This is a great movie!"
+    }
+  }
+}
+
+Multiple fields in mutations 
+
+A mutation can contain multiple fields, just like a query. There's one important distinction between queries and mutations, other than the name:
+
+While query fields are executed in parallel, mutation fields run in series, one after the other.
+
+This means that if we send two incrementCredits mutations in one request, the first is guaranteed to finish before the second begins, ensuring that we don't end up with a race condition with ourselves.

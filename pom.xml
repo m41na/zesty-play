@@ -4,21 +4,23 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.practicaldime</groupId>
-	<artifactId>zesty-play</artifactId>
+	<artifactId>zesty-travel</artifactId>
 	<version>0.1</version>
 	<packaging>jar</packaging>
 
-	<name>zesty-play</name>
+	<name>zesty-travel</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.version>4.3.20.RELEASE</spring.version>
+		<jcl.version>1.7.25</jcl.version>
+		<spring.version>5.1.2.RELEASE</spring.version>
 		<logback.version>1.2.3</logback.version>
 		<h2.version>1.4.196</h2.version>
 		<junit.version>4.12</junit.version>
+		<jetty.version>9.4.14.v20181114</jetty.version>
 	</properties>
 
 	<dependencies>
@@ -85,6 +87,16 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet.jsp</groupId>
+					<artifactId>javax.servlet.jsp-api</artifactId>
+				</exclusion>
+			</exclusions>
 			<scope>test</scope>
 		</dependency>
 
@@ -93,6 +105,12 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${jcl.version}</version>
 		</dependency>
 
 		<!-- database driver -->
@@ -117,4 +135,36 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<finalName>zesty-travel</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<webApp>
+						<resourceBases>
+							<resourceBase>www</resourceBase>
+						</resourceBases>
+						<contextPath>/</contextPath>
+						<_initParams>
+							<org.eclipse.jetty.servlet.Default.useFileMappedBuffer>false</org.eclipse.jetty.servlet.Default.useFileMappedBuffer>
+						</_initParams>
+					</webApp>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

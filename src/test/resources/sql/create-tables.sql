@@ -1,12 +1,3 @@
-DROP TABLE IF EXISTS tbl_contries;
-CREATE TABLE tbl_contries (
-    country VARCHAR(45) NOT NULL,
-    pri_code CHAR(2) NULL,
-    sec_code CHAR(2) NOT NULL,
-    dst CHAR(2) NULL,
-    PRIMARY KEY(country)
-);
-
 DROP TABLE IF EXISTS tbl_airports;
 CREATE TABLE tbl_airports (
     airport_id VARCHAR(5) NOT NULL,
@@ -28,25 +19,25 @@ CREATE TABLE tbl_airports (
 
 DROP TABLE IF EXISTS tbl_countries;
 CREATE TABLE tbl_countries (
-    country VARCHAR(45) NOT NULL,
+    name VARCHAR(45) NOT NULL,
     pri_code CHAR(2) NULL,
     sec_code CHAR(2) NOT NULL,
     dst CHAR(2) NULL,
-    PRIMARY KEY(country)
+    PRIMARY KEY(name)
 );
 
 DROP TABLE IF EXISTS tbl_planes;
 CREATE TABLE tbl_planes (
-    model VARCHAR(50) NOT NULL,
-    pri_code VARCHAR(10) NULL,
-    sec_code VARCHAR(10) NOT NULL,
+    make VARCHAR(50) NOT NULL,
+    model VARCHAR(10) NULL,
+    name VARCHAR(10) NOT NULL,
     PRIMARY KEY(model)
 );
 
 DROP TABLE IF EXISTS tbl_airlines;
 CREATE TABLE tbl_airlines (
 	id VARCHAR(5) NOT NULL,
-    airline VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     alias CHAR(30) NOT NULL,
     iata CHAR(5) NULL,
     icao CHAR(5) NULL,

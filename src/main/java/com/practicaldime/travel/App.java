@@ -25,7 +25,7 @@ public class App {
 		props.put("cors", "true");
 
 		AppServer router = new AppServer(props).router();
-		router.servlet("/graphql", null, new TravelEndpoint())
+		router.servlet("/graphql", null, TravelEndpoint.create())
 		.get("/check", "", "application/json", null, (HandlerRequest request, HandlerResponse response) -> {
 			response.send(String.format("incoming request: '%s'", request.getRequestURI()));
 			return null;

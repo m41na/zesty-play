@@ -1,0 +1,7 @@
+GraphQL Java Tools works with four types of Resolver classes:
+
+GraphQLResolver<T> to resolve complex types.
+GraphQLQueryResolver to define the operations of the root Query type.
+GraphQLMutationResolver to define the operations of the root Mutation type.
+GraphQLSubscriptionResolver to define the operations of the root Subscription type.
+

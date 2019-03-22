@@ -2,18 +2,18 @@ package com.practicaldime.travel.service;
 
 import java.util.List;
 
-import com.coxautodev.graphql.tools.GraphQLRootResolver;
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.practicaldime.travel.dao.entity.Airline;
 import com.practicaldime.travel.dao.entity.Airplane;
 import com.practicaldime.travel.dao.entity.Airport;
 import com.practicaldime.travel.dao.entity.Country;
 import com.practicaldime.travel.dao.entity.Flight;
 
-public class Query implements GraphQLRootResolver {
+public class TravelQueries implements GraphQLQueryResolver {
 
 	private final TravelService service;
 	
-	public Query(TravelService service) {
+	public TravelQueries(TravelService service) {
 		super();
 		this.service = service;
 	}

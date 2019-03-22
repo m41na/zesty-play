@@ -5,14 +5,13 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.schema.GraphQLSchema;
 import graphql.servlet.SimpleGraphQLServlet;
 
-public class TravelEndpoint extends SimpleGraphQLServlet{
+public class TravelEndpoint{
 
-	private static final long serialVersionUID = 1L;
 	private static TravelAppContext ctx;
 
-	public TravelEndpoint() {
-        super(buildSchema());
-    }
+	public static SimpleGraphQLServlet create() {
+		return SimpleGraphQLServlet.create(buildSchema());
+	}
 	
 	public static GraphQLSchema buildSchema() {
 		ctx = new TravelAppContext();
@@ -21,7 +20,7 @@ public class TravelEndpoint extends SimpleGraphQLServlet{
 		TravelService service = ctx.getBean("", TravelService.class);
 		return SchemaParser.newParser()
         .file("travel.graphqls") //parse the schema file created earlier
-        .resolvers(new Query(service))
+        .resolvers(new TravelQueries(service))
         .build()
         .makeExecutableSchema();
 	}

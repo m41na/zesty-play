@@ -5,3 +5,16 @@ GraphQLQueryResolver to define the operations of the root Query type.
 GraphQLMutationResolver to define the operations of the root Mutation type.
 GraphQLSubscriptionResolver to define the operations of the root Subscription type.
 
+mutation createBook($title: String!, $isbn: String!, $pages: Int, $author: ID!){
+  newBook(title: $title, isbn: $isbn, pageCount: $pages, author: $author ){
+    id
+    title
+    isbn
+    pageCount
+    author{
+      firstName
+      lastName
+    }
+  }
+}
+
